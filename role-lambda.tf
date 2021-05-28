@@ -1,13 +1,13 @@
 locals {
   # If the user provides a custom lambda role, don't create the default role,
   # but still attach the policies that we'd attach to the default role.
-  count = "${var.lambda_role_name != "" ? 0 : 1}"
+  count = var.lambda_role_name != "" ? 0 : 1
 }
 
 resource "aws_iam_role" "lambda" {
-  count              = "${local.count}"
+  count              = local.count
   name               = "tf-${var.service_name}-${var.stage}-lambda-execution"
-  assume_role_policy = "${data.aws_iam_policy_document.lambda_assume.json}"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
 data "aws_iam_policy_document" "lambda_assume" {
@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "lambda_assume" {
 
 resource "aws_iam_policy" "lambda" {
   name   = "tf-${var.service_name}-${var.stage}-lambda-execution"
-  policy = "${data.aws_iam_policy_document.lambda.json}"
+  policy = data.aws_iam_policy_document.lambda.json
 }
 
 # Replicate the log permissions from the default Serverless role.
@@ -40,8 +40,8 @@ data "aws_iam_policy_document" "lambda" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda" {
-  role       = "${local.lambda_role_name}"
-  policy_arn = "${aws_iam_policy.lambda.arn}"
+  role       = local.lambda_role_name
+  policy_arn = aws_iam_policy.lambda.arn
 }
 
 # Use a small CloudFormation stack to expose outputs for
@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "lambda" {
 # See: https://theburningmonk.com/2019/03/making-terraform-and-serverless-framework-work-together/
 resource "aws_cloudformation_stack" "outputs_lambda_role" {
   # Only create the stack if we create the default role
-  count = "${local.count}"
+  count = local.count
   name  = "tf-${var.service_name}-${var.stage}-outputs-lambda-role"
 
   template_body = <<STACK
@@ -75,5 +75,5 @@ Outputs:
 
 STACK
 
-  tags = "${local.tags}"
+  tags = local.tags
 }

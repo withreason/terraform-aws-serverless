@@ -6,9 +6,9 @@
 # - View metrics from `sls metrics`
 ###############################################################################
 resource "aws_iam_policy" "admin" {
-  name   = "${local.tf_group_admin_name}"
+  name   = local.tf_group_admin_name
   path   = "/"
-  policy = "${data.aws_iam_policy_document.admin.json}"
+  policy = data.aws_iam_policy_document.admin.json
 }
 
 data "aws_iam_policy_document" "admin" {
@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "admin" {
     ]
 
     resources = [
-      "${local.sls_cloudformation_arn}",
+      local.sls_cloudformation_arn,
     ]
   }
 
@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "admin" {
     ]
 
     resources = [
-      "${local.sls_deploy_bucket_arn}",
+      local.sls_deploy_bucket_arn,
     ]
   }
 
@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "admin" {
     ]
 
     resources = [
-      "${local.lambda_role_iam_arn}",
+      local.lambda_role_iam_arn,
     ]
   }
 
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "admin" {
     ]
 
     resources = [
-      "${local.sls_events_arn}",
+      local.sls_events_arn,
     ]
   }
 
